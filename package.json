@@ -13,7 +13,9 @@
   	},
     "devDependencies": {
     "winston": "*",
-    "mocha":"*"
+    "mocha":"*",
+    "chai":"*",
+    "rewire":"*"
   },
   "main": "./winston-nedb",
     "scripts": {

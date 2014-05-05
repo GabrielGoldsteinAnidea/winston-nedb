@@ -73,7 +73,31 @@ Nedb.prototype.query = function (options, callback){
     	callback = options;
     	options = {};
   	}
-  	console.log(options)
-	this.db.find(options,callback);
+  	var count = 0;
+  	var query={$where : function(){
+  		if(options.from && this.timestamp <= options.from){
+  			return false;
+  		}else if (options.until && this.timestamp >= options.until){
+  			return false;
+  		}else {
+  			return true;
+  		}
+  	}};
+  	var res = this.db.find(query);
+  	if(options.order == 'desc'){
+  		res.sort({timestamp: -1, msg: -1});
+  	}else{
+  		res.sort({timestamp: 1, msg: 1});
+  	}
+
+
+  	if(options.start){
+  		res.skip(options.start);
+  	}
+  	if(options.limit){
+  		res.limit(options.limit);
+  	}
+
+  	res.exec(callback);
 }
 

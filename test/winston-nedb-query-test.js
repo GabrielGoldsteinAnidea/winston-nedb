@@ -1,9 +1,3 @@
-var expect = require('chai').expect;
-var rewire = require('rewire');
-
-
-var Nedb = require('../winston-nedb').Nedb;
-var winston = require('winston');
 
 
 describe("check querying behaviour",function(){
@@ -21,7 +15,7 @@ describe("check querying behaviour",function(){
 		this.logger.log('info', '3log');
 	});
 	it("default-query winston for full list of ascending order sorted logs",function(done){
-		this.logger.query({},function(err,res){
+		this.logger.query({order:'asc'},function(err,res){
 			expect(res).to.have.property("nedb");
 			expect(res.nedb).to.have.property("length").above(0);
 			expect(res.nedb[0]).to.have.property("msg","1log");
@@ -52,7 +46,7 @@ describe("check querying behaviour",function(){
 	})
 	it("query logs skipping first 2 lines",function(done){
 
-		this.logger.query({start:2},function(err,res){
+		this.logger.query({order:'asc',start:2},function(err,res){
 			expect(res).to.have.property("nedb");
 			expect(res.nedb).to.have.property("length").above(0);
 			expect(res.nedb).to.have.property("length").below(2);

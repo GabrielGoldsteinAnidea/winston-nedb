@@ -1,0 +1,5 @@
+--require ./test/common.js
+--ui bdd
+--recursive
+--colors
+-R spec

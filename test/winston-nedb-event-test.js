@@ -1,9 +1,3 @@
-var expect = require('chai').expect;
-var rewire = require('rewire');
-
-
-var Nedb = require('../winston-nedb').Nedb;
-var winston = require('winston');
 
 
 describe("check querying behaviour",function(){

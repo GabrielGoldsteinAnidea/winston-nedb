@@ -84,10 +84,10 @@ Nedb.prototype.query = function (options, callback){
   		}
   	}};
   	var res = this.db.find(query);
-  	if(options.order == 'desc'){
-  		res.sort({timestamp: -1, msg: -1});
-  	}else{
+  	if(options.order == 'asc'){
   		res.sort({timestamp: 1, msg: 1});
+  	}else{
+  		res.sort({timestamp: -1, msg: -1});
   	}
 
 

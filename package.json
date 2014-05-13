@@ -16,7 +16,8 @@
     "winston": "*",
     "mocha":"*",
     "chai":"*",
-    "rewire":"*"
+    "rewire":"*",
+    "timekeeper":"*"
   },
   "main": "./winston-nedb",
     "scripts": {

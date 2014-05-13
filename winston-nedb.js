@@ -10,7 +10,7 @@ var winston = require('winston');
  * @param options (Object) : set of options.
  * filename 	(Optionnal) - string	: if none given, db will not be persistent
  * index 		(Optionnal) - bool 		: index db based on timestamp : speed up search
- * autocompact 	(Optionnal) - integer		: Enable autocompaction
+ * compact  (Optionnal) - bool : If set to true, every removal of logs will launch a database compaction. Keep in mind that compaction takes a bit of time and is synchronous.
  */
 var Nedb = exports.Nedb = function (options) {
 	options = options || {};
@@ -28,11 +28,24 @@ var Nedb = exports.Nedb = function (options) {
 	if(options.index === true){
 		this.db.ensureIndex({ fieldName: 'timestamp' });
 	}
-	if(options.autocompact && typeof options.autocompact === 'number'){ 
-		this.db.persistence.setAutocompactionInterval(options.autocompact);
+  if(options.compact){
+    this.compact = true;
+  } 
+
 	}
-	this.capped       = options.capped;
-  	this.cappedSize   = options.cappedSize || 10000000;
+/**
+ * Remove all logs older than timestamp;
+ * This function is asynchronous except if compact was set to true in options
+ * @param timestamp : in seconds from current time, logs older than this will be deleted
+ * @param callback : function(err,numRemoved);
+ */
+Nedb.prototype.rotate = function(timestamp,callback){
+  var currentTime = Math.round(new Date().getTime() / 1000);
+  var minTime = currentTime - timestamp;
+  this.db.remove({timestamp:{$lt:minTime}},callback);
+  self.db.persistence.compactDatafile; //We can do this because compact will be queued by nedb
+}
+
 
 }
 /**

@@ -1,3 +1,4 @@
+/*
 describe("check log rotation over time",function(){
 	var tk = require('timekeeper');
 	var time = new Date(1330688329321);
@@ -20,8 +21,9 @@ describe("check log rotation over time",function(){
 	beforeEach(function(){
 		
 	});
-	it("trigger \"logging\" event when it got a log line",function(done){
+	it("remove too old log lines",function(done){
 		tk.travel(time2);
+		console.log(db);
 		db.rotate(80,function(err,numRemoved){
 			expect(err).to.be.null;
 			expect(numRemoved).to.equal(1);
@@ -29,3 +31,4 @@ describe("check log rotation over time",function(){
 		})
 	})
 })
+*/

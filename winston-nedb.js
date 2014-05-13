@@ -33,6 +33,8 @@ var Nedb = exports.Nedb = function (options) {
   } 
 
 	}
+  util.inherits(Nedb, winston.Transport);
+ winston.transports.Nedb = Nedb;
 /**
  * Remove all logs older than timestamp;
  * This function is asynchronous except if compact was set to true in options
@@ -46,13 +48,10 @@ Nedb.prototype.rotate = function(timestamp,callback){
   self.db.persistence.compactDatafile; //We can do this because compact will be queued by nedb
 }
 
-
-}
 /**
  * Inherit from winston
 */
- util.inherits(Nedb, winston.Transport);
- winston.transports.Nedb = Nedb;
+ 
 
 Nedb.prototype.log = function (level, msg, meta, callback){
 	var self = this;

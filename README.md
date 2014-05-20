@@ -8,8 +8,8 @@ A nedb transport for winston
 ####Available Options
 
 - __filename__ _(Optionnal)_ - string : if none given, db will not be persistent
-- __index__ _(Optionnal)_ - bool : index db based on timestamp. speed up search on this field
-- __compact__ _(Optionnal)_ - bool : Enable compaction on log rotation. Not really usefull except if you do not plan to delete logs
+- __timestamp__ _(Optionnal)_ - bool : default tu true, register logs timestamp
+- __compact__ _(Optionnal)_ - bool : Enable compaction on log rotation. Not really usefull except if you plan to delete logs during lifetime.
 
 ####Usage
 

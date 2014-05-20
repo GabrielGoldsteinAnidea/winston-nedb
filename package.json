@@ -1,6 +1,6 @@
 {
 	"name":"winston-nedb",
-	"version":"0.1.4",
+	"version":"0.2.0",
 	"public":true,
 	"description":"A neDB transport for winston",
 	"author":"Sebastien Dumetz <s.dumetz@holusion.com>",

@@ -9,8 +9,8 @@ var winston = require('winston');
 /**
  * @param options (Object) : set of options.
  * filename 	(Optionnal) - string	: if none given, db will not be persistent
- * index 		(Optionnal) - bool 		: index db based on timestamp : speed up search
  * compact  (Optionnal) - bool : If set to true, every removal of logs will launch a database compaction. Keep in mind that compaction takes a bit of time and is synchronous.
+ * timestamp (Optionnal) - bool : Default to true. If false, db will not store timestamps on logs.
  */
 var Nedb = exports.Nedb = function (options) {
 	options = options || {};
@@ -25,20 +25,23 @@ var Nedb = exports.Nedb = function (options) {
 	}else{
 		this.db = new Datastore();
 	};
-	if(options.index === true){
+	if(options.timestamp !== false){
 		this.db.ensureIndex({ fieldName: 'timestamp' });
-	}
+    this.timestamp = true;
+	}else{
+    this.timestamp = false;
+  }
   if(options.compact){
     this.compact = true;
   } 
 
-	}
-  util.inherits(Nedb, winston.Transport);
- winston.transports.Nedb = Nedb;
+}
+util.inherits(Nedb, winston.Transport);
+winston.transports.Nedb = Nedb;
 /**
  * Remove all logs older than timestamp;
  * This function is asynchronous except if compact was set to true in options
- * @param timestamp : in seconds from current time, logs older than this will be deleted
+ * @param timestamp : in milliseconds from current time, logs older than this will be deleted
  * @param callback : function(err,numRemoved);
  */
 Nedb.prototype.rotate = function(timestamp,callback){
@@ -58,8 +61,11 @@ Nedb.prototype.log = function (level, msg, meta, callback){
 	var entry = {
 		level : level,
 		msg : msg,
-		timestamp: new Date().getTime()
+		
 	};
+  if(this.timestamp){
+    entry.timestamp= new Date().getTime()
+  }
 	//If provided, metadata is added, nested in .meta property
 	if ( meta ) {
        entry.meta = meta;
@@ -87,9 +93,9 @@ Nedb.prototype.query = function (options, callback){
   	}
   	var count = 0;
   	var query={$where : function(){
-  		if(options.from && this.timestamp <= options.from){
+  		if(options.from && this.timestamp  && this.timestamp <= options.from){
   			return false;
-  		}else if (options.until && this.timestamp >= options.until){
+  		}else if (options.until && this.timestamp && this.timestamp >= options.until){
   			return false;
   		}else {
   			return true;

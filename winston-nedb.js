@@ -42,7 +42,7 @@ var Nedb = exports.Nedb = function (options) {
  * @param callback : function(err,numRemoved);
  */
 Nedb.prototype.rotate = function(timestamp,callback){
-  var currentTime = Math.round(new Date().getTime() / 1000);
+  var currentTime = new Date().getTime();
   var minTime = currentTime - timestamp;
   this.db.remove({timestamp:{$lt:minTime}},callback);
   self.db.persistence.compactDatafile; //We can do this because compact will be queued by nedb
@@ -58,7 +58,7 @@ Nedb.prototype.log = function (level, msg, meta, callback){
 	var entry = {
 		level : level,
 		msg : msg,
-		timestamp: Math.round(new Date().getTime() / 1000)
+		timestamp: new Date().getTime()
 	};
 	//If provided, metadata is added, nested in .meta property
 	if ( meta ) {

@@ -21,7 +21,7 @@ var Nedb = exports.Nedb = function (options) {
 	this.errorTimeout = options.errorTimeout || 10000;
 	if(options.filename){
 		//DB loading is done synchronously!
-		this.db = new Datastore({filename:filename,autoload:true});
+		this.db = new Datastore({filename: options.filename,autoload:true});
 	}else{
 		this.db = new Datastore();
 	};

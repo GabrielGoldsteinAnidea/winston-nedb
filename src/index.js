@@ -93,15 +93,17 @@ export default class NeDB extends Transport {
   log(info, callback) {
     const { level, message, ...meta } = info;
 
-    setImmediate(() => this.emit('logged', info));
-
     this._db.insert(
       {
         level,
         message,
-        ...meta && { meta }
+        ...meta && { meta },
+        timestamp: new Date()
       },
-      (err, row) => err ? callback(err) : callback()
+      (err, row) => {
+        err ? callback(err) : callback();
+        setImmediate(() => this.emit('logged', info));
+      }
     );
   }
 };

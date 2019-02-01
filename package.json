@@ -17,6 +17,7 @@
     "logger"
   ],
   "dependencies": {
+    "babel-polyfill": "^6.26.0",
     "nedb": "^0.10.4",
     "winston": "*"
   },
@@ -28,7 +29,6 @@
     "babel-preset-minify": "^0.5.0",
     "chai": "*",
     "mocha": "*",
-    "rewire": "*",
     "timekeeper": "*",
     "webpack": "^4.29.0",
     "webpack-cli": "^3.2.1",

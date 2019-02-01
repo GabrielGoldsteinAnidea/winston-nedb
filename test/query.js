@@ -3,21 +3,24 @@ import NeDB from '../src';
 
 describe('query', function () {
   beforeEach(async function () {
+    this.transport = new NeDB();
+
     this.logger = createLogger({
-      transports: [new NeDB()]
+      transports: this.transport
     });
 
     this.logger.log('info', '1log');
     this.logger.log('info', '2log');
     this.logger.log('info', '3log');
 
-    /*
-    * Have to wait so that requests are finished.
-    * There seems to be no way to do it properly
-    * as winston.Logger#log doesn't accept a callback
-    * anymore.
-    */
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise(resolve => {
+      let count = 0;
+
+      this.transport.on('logged', () => {
+        count++;
+        if (count === 3) { resolve(); }
+      })
+    })
   });
 
   it('order: asc', function (done) {
@@ -53,10 +56,11 @@ describe('query', function () {
       expect(err).not.to.exist;
       expect(res).to.have.property('nedb');
 
+      expect(res.nedb).not.to.be.empty;
       expect(res.nedb).to.have.length.below(3);
       done();
     });
-  })
+  });
 
   it('skip: 2', function (done) {
     this.logger.query({ order: 'asc', start: 2 }, function (err, res) {
@@ -67,5 +71,5 @@ describe('query', function () {
       expect(res.nedb[0]).to.have.property('message', '3log');
       done();
     });
-  })
+  });
 });

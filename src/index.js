@@ -27,16 +27,15 @@ export default class NeDB extends Transport {
   /**
    * Remove all logs older than timestamp.
    * This function is asynchronous except if compact was set to true in options.
-   * @param {number} timestamp - In ms since current time.
+   * @param {number} timestamp - In ms before current time.
    * @return {Promise<number>} - Number of rows removed.
    * @throws - Errors from Datastore#remove().
    */
-  async rotate(timestamp) {
-    const currentTime = new Date().getTime();
-    const minTime = currentTime - timestamp;
+  async rotate(ms) {
+    const minTime = new Date(Date.now() - ms);
 
     return new Promise((resolve, reject) => this._db.remove(
-      { timestamp: { $lt: minTime } },
+      { timestamp: { $lte: minTime } },
       (err, numRemoved) => {
         if (err) { return reject(err); }
 
@@ -102,7 +101,7 @@ export default class NeDB extends Transport {
       },
       (err, row) => {
         err ? callback(err) : callback();
-        setImmediate(() => this.emit('logged', info));
+        setTimeout(() => this.emit('logged', row));
       }
     );
   }

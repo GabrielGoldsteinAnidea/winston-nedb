@@ -3,10 +3,9 @@
   "version": "0.1.4",
   "public": true,
   "description": "A neDB transport for winston",
-  "author": "Sebastien Dumetz <s.dumetz@holusion.com>",
   "repository": {
     "type": "git",
-    "url": "git@github.com:klepthys/winston-nedb.git"
+    "url": "https://github.com/kothique/winston-nedb.git"
   },
   "keywords": [
     "logging",
@@ -22,14 +21,24 @@
     "winston": "*"
   },
   "devDependencies": {
-    "winston": "*",
-    "mocha": "*",
+    "@babel/core": "^7.2.2",
+    "@babel/preset-env": "^7.3.1",
+    "@babel/register": "^7.0.0",
+    "babel-loader": "^8.0.5",
+    "babel-preset-minify": "^0.5.0",
     "chai": "*",
+    "mocha": "*",
     "rewire": "*",
-    "timekeeper": "*"
+    "timekeeper": "*",
+    "webpack": "^4.29.0",
+    "webpack-cli": "^3.2.1",
+    "webpack-merge": "^4.2.1",
+    "winston": "*"
   },
-  "main": "./winston-nedb",
+  "main": "./src/index.js",
   "scripts": {
-    "test": "./node_modules/.bin/mocha"
+    "start": "npx webpack --config=webpack.dev.js --watch",
+    "build": "npx webpack --config=webpack.prod.js",
+    "test": "npx mocha --compilers js:@babel/register"
   }
 }

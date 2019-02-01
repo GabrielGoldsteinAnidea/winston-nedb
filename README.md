@@ -1,39 +1,42 @@
 winston-nedb
 ============
 
-A nedb transport for winston
+A NeDB transport for [winston](https://github.com/winstonjs/winston).
 
-### Usage
+## Examples
 
-#### Available Options
+```js
+import WinstonNeDB from '@kothique/winston-nedb';
+import { createLogger } from 'winston';
+    
+const logger = createLogger({
+  transports: new WinstonNeDB({
+    filename: '/tmp/somelog',
+    compact: true
+  })
+});
+    
+logger.log('warn', 'meow');
+```
 
-- __filename__ _(Optional)_ - string : if none given, db will not be persistent
-- __index__ _(Optional)_ - bool : index db based on timestamp. speed up search on this field
-- __compact__ _(Optional)_ - bool : Enable compaction on log rotation. Not really usefull except if you do not plan to delete logs
+### Documentation
 
-#### Usage
+#### Class: NeDB
 
-  import WinstonNeDB from '@kothique/winston-nedb';
-  import { createLogger } from 'winston';
+##### `new NeDB([options])`
 
-  const logger = createLogger({
-    transports: new WinstonNeDB({
-      filename: '/tmp/somelog',
-      compact: true
-    })
-  });
+- `options` {object?}
+  - `filename` {string?} Path to the NeDB datastore. In-memory storage will be used, if left empty.
+  - `compact` {boolean} Default: false. If true, will run compaction on every log removal (e.g. on rotation).
 
-### Currently supported
+##### `rotate(interval)`
 
-- query
-- rotate
+Remove all log entries with timestamp less than or equal to `interval`ms before now. Return a promise with the number of entries removed. Throws if NeDB's `Datastore#remove()` throws.
 
-
-### Untested but should work
-
-### TODO
+## TODO
 
 - Allow indexing based on any field (and multiple fields?)
 - Check if autocompact is integer (or it works with float?) AND set a minimum
 - Implement capped size
 - Set multiple timestamp choices (epoch OR date OR ??)
+- More examples

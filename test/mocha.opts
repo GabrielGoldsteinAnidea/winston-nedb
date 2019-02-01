@@ -2,4 +2,4 @@
 --ui bdd
 --recursive
 --colors
--R spec
+#-R spec

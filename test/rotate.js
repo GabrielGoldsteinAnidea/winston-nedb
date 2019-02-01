@@ -22,11 +22,11 @@ describe('rotate', function () {
     await new Promise(resolve => {
       let count = 0;
 
-      this.transport.on('logged', info => {
+      this.transport.on('logged', () => {
         count++;
         if (count === 2) { resolve(); }
-      })
-    })
+      });
+    });
   });
 
   afterEach(async function () {

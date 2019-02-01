@@ -13,23 +13,20 @@ A nedb transport for winston
 
 #### Usage
 
-    var Nedb = require('../winston-nedb').Nedb;
-    var winston = require('winston');
-    
-    var options = {
-        filename:'/tmp/log_db',
-        index:true,
-        autocompact:false
-    }
-    var logger = new (winston.Logger)({
-        transports: [
-            new Nedb(options)
-        ]
-    });
+  import WinstonNeDB from '@kothique/winston-nedb';
+  import { createLogger } from 'winston';
+
+  const logger = createLogger({
+    transports: new WinstonNeDB({
+      filename: '/tmp/somelog',
+      compact: true
+    })
+  });
 
 ### Currently supported
 
-basic querying
+- query
+- rotate
 
 
 ### Untested but should work

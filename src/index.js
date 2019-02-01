@@ -1,4 +1,7 @@
-import 'babel-polyfill';
+if (!global._babelPolyfill) {
+	require('babel-polyfill');
+}
+
 import Transport from 'winston-transport';
 import Datastore from 'nedb';
 
@@ -106,6 +109,7 @@ export default class NeDB extends Transport {
     );
   }
 };
+module.exports = NeDB;
 
 /* From winston/transports/file.js */
 function normalizeQuery(options) {

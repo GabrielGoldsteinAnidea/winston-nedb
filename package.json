@@ -1,27 +1,35 @@
 {
-	"name":"winston-nedb",
-	"version":"0.1.4",
-	"public":true,
-	"description":"A neDB transport for winston",
-	"author":"Sebastien Dumetz <s.dumetz@holusion.com>",
-	"repository":{
-		"type":"git",
-		"url":"git@github.com:klepthys/winston-nedb.git"
-	},
-	"keywords": [ "logging", "sysadmin", "tools", "winston", "nedb", "log", "logger" ],
-	  "dependencies": {
-    	"nedb": "^0.10.4",
-      "winston":"*"
-  	},
-    "devDependencies": {
+  "name": "winston-nedb",
+  "version": "0.1.4",
+  "public": true,
+  "description": "A neDB transport for winston",
+  "author": "Sebastien Dumetz <s.dumetz@holusion.com>",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:klepthys/winston-nedb.git"
+  },
+  "keywords": [
+    "logging",
+    "sysadmin",
+    "tools",
+    "winston",
+    "nedb",
+    "log",
+    "logger"
+  ],
+  "dependencies": {
+    "nedb": "^0.10.4",
+    "winston": "*"
+  },
+  "devDependencies": {
     "winston": "*",
-    "mocha":"*",
-    "chai":"*",
-    "rewire":"*",
-    "timekeeper":"*"
+    "mocha": "*",
+    "chai": "*",
+    "rewire": "*",
+    "timekeeper": "*"
   },
   "main": "./winston-nedb",
-    "scripts": {
+  "scripts": {
     "test": "./node_modules/.bin/mocha"
   }
 }

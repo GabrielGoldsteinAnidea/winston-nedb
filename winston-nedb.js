@@ -2,120 +2,126 @@ var util = require('util');
 var os = require('os');
 var Stream = require('stream').Stream;
 
-
 var Datastore = require('nedb');
 var winston = require('winston');
 
 /**
- * @param options (Object) : set of options.
- * filename 	(Optionnal) - string	: if none given, db will not be persistent
- * compact  (Optionnal) - bool : If set to true, every removal of logs will launch a database compaction. Keep in mind that compaction takes a bit of time and is synchronous.
- * timestamp (Optionnal) - bool : Default to true. If false, db will not store timestamps on logs.
+  * @param {object?}  options
+  * @param {string?}  options.filename - If none is given, db will not be persisted.
+  * @param {boolean?} options.compact - Default: false. If true, every removal of logs will launch a database compaction.
+  *                                     Keep in mind that compaction takes a bit of time and is synchronous.
+  * @param {boolean?} options.timestamp - Default: true. If false, db will not store timestamps on logs.
  */
-var Nedb = exports.Nedb = function (options) {
-	options = options || {};
+var Nedb = exports.Nedb = function Nedb(options = {}) {
+  var filename = options.filename || null;
+  var compact = typeof options.compact === 'boolean' ? options.compact : false;
+  var timestamp = typeof options.timestamp === 'boolean' ? options.timestamp : true;
 
 	var self = this;
-	this.name = 'nedb';
-	this.level = options.level || 'info';
-	this.errorTimeout = options.errorTimeout || 10000;
-	if(options.filename){
-		//DB loading is done synchronously!
-		this.db = new Datastore({filename: options.filename,autoload:true});
-	}else{
-		this.db = new Datastore();
-	};
-	if(options.timestamp !== false){
-		this.db.ensureIndex({ fieldName: 'timestamp' });
-    this.timestamp = true;
-	}else{
-    this.timestamp = false;
-  }
-  if(options.compact){
-    this.compact = true;
-  } 
+	self.name = 'nedb';
+	self.level = options.level || 'info';
 
+	if (filename) {
+		self.db = new Datastore({ filename: filename, autoload: true });
+	} else {
+		self.db = new Datastore();
+	};
+
+  self.timestamp = timestamp;
+	if (timestamp) {
+		self.db.ensureIndex({ fieldName: 'timestamp' });
+  }
+
+  self.compact = compact;
 }
 util.inherits(Nedb, winston.Transport);
-winston.transports.Nedb = Nedb;
+
 /**
- * Remove all logs older than timestamp;
- * This function is asynchronous except if compact was set to true in options
- * @param timestamp : in milliseconds from current time, logs older than this will be deleted
- * @param callback : function(err,numRemoved);
+ * Remove all logs older than timestamp.
+ * This function is asynchronous except if compact was set to true in options.
+ * @param {number}                    timestamp - In ms since current time.
+ * @param {(err, numRemoved) => void} callback
  */
-Nedb.prototype.rotate = function(timestamp,callback){
+Nedb.prototype.rotate = function rotate(timestamp, callback) {
+  var self = this;
+
   var currentTime = new Date().getTime();
   var minTime = currentTime - timestamp;
-  this.db.remove({timestamp:{$lt:minTime}},callback);
-  self.db.persistence.compactDatafile; //We can do this because compact will be queued by nedb
+  self.db.remove({ timestamp: { $lt: minTime } }, callback);
+  self.db.persistence.compactDatafile; // We can do this because compact will be queued by nedb.
 }
 
 /**
  * Inherit from winston
 */
- 
 
-Nedb.prototype.log = function (level, msg, meta, callback){
+/**
+ * @param {string} level
+ * @param {string} message
+ * @param {any} meta - Must be serializable.
+ * @param {(err, newDoc) => void} - Callback.
+ */
+Nedb.prototype.log = function log(level, msg, meta, callback) {
 	var self = this;
+
 	var entry = {
-		level : level,
-		msg : msg,
-		
+		level: level,
+		msg: msg,
 	};
-  if(this.timestamp){
-    entry.timestamp= new Date().getTime()
+
+  if (this.timestamp) {
+    entry.timestamp = new Date().getTime();
   }
-	//If provided, metadata is added, nested in .meta property
-	if ( meta ) {
-       entry.meta = meta;
-   	}
-    //Store it in db
-    this.db.insert(entry,callback);
+
+	/* If provided, metadata is added, nested in .meta property. */
+	if (meta) {
+    entry.meta = meta;
+ 	}
+
+  // Store it in db.
+  this.db.insert(entry, callback);
 }
 
 /**
- * @param options : Object - as defined by winston guidelines
-   var options = {
-    from: timestamp,
-    until: timestamp,
-    limit: integer,
-    start: integer,
-    order: 'desc' / 'asc',
-    fields: ['message'], etc... 
-  };
- * @param callback : function(err,doc) - array of log lines matching query
+ * @param {object?}           options
+ * @param {Date?}             options.from
+ * @param {Date?}             options.until
+ * @param {number?}           options.rows
+ * @param {number?}           options.start
+ * @param {('asc' | 'desc')?} options.order
+ * @param {string[]?}         options.fields
  */
-Nedb.prototype.query = function (options, callback){
+Nedb.prototype.query = function (options, callback) {
 	if (typeof options === 'function') {
-    	callback = options;
-    	options = {};
-  	}
-  	var count = 0;
-  	var query={$where : function(){
-  		if(options.from && this.timestamp  && this.timestamp <= options.from){
-  			return false;
-  		}else if (options.until && this.timestamp && this.timestamp >= options.until){
-  			return false;
-  		}else {
-  			return true;
-  		}
-  	}};
-  	var res = this.db.find(query);
-  	if(options.order == 'asc'){
-  		res.sort({timestamp: 1, msg: 1});
-  	}else{
-  		res.sort({timestamp: -1, msg: -1});
-  	}
+  	callback = options;
+  	options = {};
+	}
 
+	var count = 0;
+	var query = { $where : function () {
+		if (options.from && this.timestamp && this.timestamp <= options.from) {
+			return false;
+		} else if (options.until && this.timestamp && this.timestamp >= options.until) {
+			return false;
+		} else {
+			return true;
+		}
+	}};
 
-  	if(options.start){
-  		res.skip(options.start);
-  	}
-  	if(options.limit){
-  		res.limit(options.limit);
-  	}
+	var cursor = this.db.find(query);
+	if (options.order === 'asc') {
+		cursor.sort({ timestamp: 1, msg: 1 });
+	} else {
+		cursor.sort({ timestamp: -1, msg: -1 });
+	}
 
-  	res.exec(callback);
+	if (options.start) {
+		cursor.skip(options.start);
+	}
+
+	if (options.rows) {
+		cursor.limit(options.rows);
+	}
+
+	cursor.exec(callback);
 }
-

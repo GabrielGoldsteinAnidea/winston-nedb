@@ -1,17 +1,23 @@
 {
-  "name": "winston-nedb",
-  "version": "0.2.0",
+  "name": "@kothique/winston-nedb",
+  "version": "1.0.0",
   "public": true,
   "description": "A NeDB transport for winston",
+  "homepage": "https://github.com/kothique/winston-nedb#readme",
   "repository": {
     "type": "git",
     "url": "https://github.com/kothique/winston-nedb.git"
   },
+  "bugs": {
+    "url": "https://github.com/kothique/winston-nedb/issues"
+  },
+  "license": "WTFPL",
   "keywords": [
     "logging",
     "sysadmin",
     "tools",
     "winston",
+    "transport",
     "nedb",
     "log",
     "logger"
@@ -31,7 +37,7 @@
     "mocha": "*",
     "timekeeper": "*"
   },
-  "main": "./src/index.js",
+  "main": "./dist/index.js",
   "scripts": {
     "start": "npx babel src --out-dir dist --source-maps true --watch",
     "build": "npx babel src --out-dir dist --source-maps true --env-name production",

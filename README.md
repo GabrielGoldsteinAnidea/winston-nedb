@@ -8,14 +8,14 @@ A NeDB transport for [winston](https://github.com/winstonjs/winston).
 ```js
 import WinstonNeDB from '@kothique/winston-nedb';
 import { createLogger } from 'winston';
-    
+
 const logger = createLogger({
   transports: new WinstonNeDB({
     filename: '/tmp/somelog',
     compact: true
   })
 });
-    
+
 logger.log('warn', 'meow');
 ```
 
@@ -27,7 +27,7 @@ logger.log('warn', 'meow');
 
 - `options` {object?}
   - `filename` {string?} Path to the NeDB datastore. In-memory storage will be used, if left empty.
-  - `compact` {boolean} Default: false. If true, will run compaction on every log removal (e.g. on rotation).
+  - `compact` {boolean?} Default: false. If true, will run compaction on every log removal (e.g. on rotation).
 
 ##### `rotate(interval)`
 

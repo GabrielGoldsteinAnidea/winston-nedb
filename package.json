@@ -1,6 +1,6 @@
 {
   "name": "@kothique/winston-nedb",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "public": true,
   "description": "A NeDB transport for winston",
   "homepage": "https://github.com/kothique/winston-nedb#readme",
@@ -23,13 +23,13 @@
     "logger"
   ],
   "dependencies": {
+    "@babel/polyfill": "^7.2.5",
     "nedb": "^0.10.4",
     "winston": "*"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",
     "@babel/core": "^7.2.2",
-    "@babel/polyfill": "^7.2.5",
     "@babel/preset-env": "^7.3.1",
     "@babel/register": "^7.0.0",
     "babel-preset-minify": "^0.5.0",

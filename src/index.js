@@ -75,10 +75,10 @@ export default class NeDB extends Transport {
     }};
 
     const cursor = this._db.find(query);
-    if (options.order === 'asc') {
-      cursor.sort({ meta.lineNum : 1, timestamp: 1, message: 1 });
+      if (options.order === 'asc') {
+          cursor.sort({ linenum: 1, timestamp: 1, message: 1 });
     } else {
-      cursor.sort({ meta.lineNum : -1, timestamp: -1, message: -1 });
+         cursor.sort({ linenum: -1, timestamp: -1, message: -1 });
     }
 
     if (options.start) {
@@ -93,12 +93,13 @@ export default class NeDB extends Transport {
   }
 
   log(info, callback) {
-    const { level, message, ...meta } = info;
+    const { level, message, linenum, ...meta } = info;
 
     this._db.insert(
       {
         level,
         message,
+        linenum,
         ...meta && { meta },
         timestamp: new Date()
       },

@@ -76,9 +76,9 @@ export default class NeDB extends Transport {
 
     const cursor = this._db.find(query);
     if (options.order === 'asc') {
-      cursor.sort({ timestamp: 1, message: 1 });
+      cursor.sort({ meta.lineNum : 1, timestamp: 1, message: 1 });
     } else {
-      cursor.sort({ timestamp: -1, message: -1 });
+      cursor.sort({ meta.lineNum : -1, timestamp: -1, message: -1 });
     }
 
     if (options.start) {
